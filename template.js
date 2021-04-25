@@ -1,24 +1,49 @@
 'use strict';
-class ClassName extends HTMLElement{
+class ImgLazy extends HTMLElement{
 
     static get observedAttributes(){
-        return ['attr']
+        return ['src','lazy']
     }
 
-    static get ATTR(){return new Set(['true', 'false', ''])}
+    static get ATTR_LAZY(){return new Set(['true', 'false', ''])}
 
-    get attr(){ return this.getAttribute("attr")}
-    set attr(v){this.setAttribute("attr", v)}
+    get lazy(){ return this.getAttribute("lazy")}
+    set lazy(v){this.setAttribute("lazy", v)}
+    
+    get src(){ return this.getAttribute("src")}
+    set src(v){this.setAttribute("src", v)}
   
      constructor(){
         super()
 
         //#region Root
-         this.root = this.attachShadow({mode: 'open'})
+        this.root       = this.attachShadow({mode: 'open'})
+        this.root.placeholder = document.createElement('main')     // zIndex 20
+        this.root.image = new Image()                              // zIndex 10
+        this.root.style = document.createElement('link')
+
+        //style
+        this.root.style.setAttribute('rel','stylesheet')
+        this.root.style.setAttribute('href','img.css')
+
+        this.root.appendChild(this.root.style)
+
+
+        //placeholder
+        this.root.placeholder.textContent = 'Placeholder...'
+
+        this.root.appendChild(this.root.placeholder)
+
+        //img
+        this.root.appendChild(this.root.image   )
+
         
         //#endregion
 
-        //#region Fields         
+        //#region Fields        
+            this._src = this.src
+            this._isLazy = false
+
                     
         //#endregion
         
@@ -26,12 +51,32 @@ class ClassName extends HTMLElement{
     }
 
     connectedCallback(){
-        // this.addEventListener()
+        this.addEventListener()
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch(name){
-            case 'attr':{
+            case 'src':{
+                if(this._isLazy)
+                    this.removeAttribute("src")
+
+                break
+            }
+
+            case 'lazy':{
+                if(!ClassName.ATTR_LAZY.has(newValue)) return console.error('Can be setted only value: ', ClassName.ATTR_LAZY)
+
+                if(newValue == "true" || newValue == ""){
+                    this._isLazy = true
+                }
+                else if(newValue == "false"){
+                    this._isLazy = false
+                }
+
+
+                break
+            }
+            /*case 'attr':{
                 if(!ClassName.ATTR.has(newValue)) return console.error('Can be setted only value: ', ClassName.ATTR)
 
                 if(newValue == "true" || newValue == ""){
@@ -42,13 +87,38 @@ class ClassName extends HTMLElement{
                 }
 
                 break;
-            }
+            }*/
         }
     }
 
     //#region Private
     
-        addEventListener(){}
+        addEventListener(){
+            this.root.image.onload = this.loaded.bind(this)
+            
+        }
+
+        load(){
+            console.debug('Loading image...',this.root)
+            this.showPlaceholder()
+            this.root.image.src = this._src
+        }
+
+        loaded(){
+            // debugger
+            console.debug('Image loaded',this.root)
+            this.hidePlaceholder()
+        }
+
+
+        showPlaceholder(){
+            console.debug('Show placeholder',this.root)
+            this.root.placeholder.classList.remove('hidden')
+        }
+        hidePlaceholder(){
+            console.debug('Hide placeholder',this.root)
+            this.root.placeholder.classList.add('hidden')
+        }
 
     //#endregion
 
@@ -57,4 +127,4 @@ class ClassName extends HTMLElement{
 }
 
     
-customElements.define('custom-element', ClassName)
+customElements.define('img-custom', ImgLazy)
