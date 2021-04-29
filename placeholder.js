@@ -2,7 +2,7 @@
 class Placeholder extends HTMLElement{
 
     static get observedAttributes(){
-        return ['loading','width', 'height']
+        return ['width', 'height']
     }
 
     static get ATTR_LOADING(){return new Set(['true', 'false', ''])}
@@ -41,6 +41,7 @@ class Placeholder extends HTMLElement{
 
     connectedCallback(){
         // this.addEventListener()
+        this.loading = true
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
