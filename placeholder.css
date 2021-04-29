@@ -22,9 +22,9 @@
     z-index: 1;
     width: 500%;
     margin-left: -250%;
-    background: linear-gradient(to right,   var(--placeholder-color-gradient-1) 46%,
+    background: linear-gradient(to right,   var(--placeholder-color-gradient-edge) 46%,
                                             var(--placeholder-color-gradient-mid) 50%,
-                                            var(--placeholder-color-gradient-1) 54%) 50% 50%;
+                                            var(--placeholder-color-gradient-edge) 54%) 50% 50%;
 
     -webkit-animation: phAnimation 0.8s linear infinite;
     animation: phAnimation 0.8s linear infinite;
